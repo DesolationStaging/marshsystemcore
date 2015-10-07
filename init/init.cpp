@@ -899,23 +899,26 @@ static selinux_enforcing_status selinux_status_from_cmdline() {
 
 static bool selinux_is_disabled(void)
 {
-    if (ALLOW_DISABLE_SELINUX) {
+    #ifdef ALLOW_DISABLE_SELINUX
+
         if (access("/sys/fs/selinux", F_OK) != 0) {
             // SELinux is not compiled into the kernel, or has been disabled
             // via the kernel command line "selinux=0".
             return true;
         }
         return selinux_status_from_cmdline() == SELINUX_DISABLED;
-    }
 
+    #endif
     return false;
 }
 
 static bool selinux_is_enforcing(void)
 {
+#ifdef ALLOW_DISABLE_SELINUX
     if (ALLOW_DISABLE_SELINUX) {
         return selinux_status_from_cmdline() == SELINUX_ENFORCING;
     }
+#endif
     return true;
 }
 
